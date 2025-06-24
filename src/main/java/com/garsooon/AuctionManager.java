@@ -327,7 +327,6 @@ public class AuctionManager {
             case 0: return "Oak Log";
             case 1: return "Spruce Log";
             case 2: return "Birch Log";
-            case 3: return "Jungle Log";
             default: return "Unknown Log";
         }
     }
@@ -337,7 +336,6 @@ public class AuctionManager {
             case 0: return "Oak Leaves";
             case 1: return "Spruce Leaves";
             case 2: return "Birch Leaves";
-            case 3: return "Jungle Leaves";
             default: return "Unknown Leaves";
         }
     }
@@ -347,7 +345,6 @@ public class AuctionManager {
             case 0: return "Oak Sapling";
             case 1: return "Spruce Sapling";
             case 2: return "Birch Sapling";
-            case 3: return "Jungle Sapling";
             default: return "Unknown Sapling";
         }
     }
