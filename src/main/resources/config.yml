@@ -1,0 +1,20 @@
+#Auctioneer Configuration File
+
+# Time in seconds, duration of auctions
+duration: 60
+
+# Cooldown on using /auction command per player
+cooldown-minutes: 60
+
+# Time in seconds to add per bid
+time_add_per_bid: 10
+
+# Maximum total auction time in seconds
+max_auction_time: 120
+
+blacklist:
+  - BEDROCK
+  - 44:4
+  - tile.stoneSlab.crashing_slabs
+# Add new blacklisted items by making a new line then - Item name
+#like how it would appear in game but in all caps and _'s for spaces
