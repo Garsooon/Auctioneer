@@ -36,11 +36,14 @@ It lets players auction off items they’re holding, with configurable settings 
 ## Usage
 
 - **Start an auction**:  
-  `/auction <starting_price> <MinBidIncrease>`  
-  Begins an auction for the item you are holding.
+  `/auction <starting_price> <minBidIncrease>`  
+  Begins an auction for the item you are holding.</br>
+  A 5$ as the minimun bid increase will increase every bid by 5$</br>
+  A 5% will increase by 5% of the starting bid.
 
 - **Place a bid**:  
-  Type your bid amount in chat during an active auction.
+  Type your bid amount in chat during an active auction.</br>
+  `/bid <amount>`
 
 - **Auction rules**:
   - Only one auction can run at a time.
