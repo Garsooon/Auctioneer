@@ -71,3 +71,5 @@ You can build the plugin using Maven:
 
 ```bash
 mvn clean package
+```
+If you get issues with building try installing the Economy libraries you need into your IDE or Local Maven Repo
