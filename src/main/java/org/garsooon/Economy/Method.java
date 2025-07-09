@@ -1,4 +1,4 @@
-package com.garsooon.Economy;
+package org.garsooon.Economy;
 
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
@@ -7,7 +7,7 @@ import org.bukkit.plugin.Plugin;
  * Interface to be implemented by a payment method.
  *
  * Original author: Nijikokun <nijikokun@shortmail.com> (@nijikokun)
- * Modified by: garsooon for ArenaFighter wager integration
+ * Modified by: Garsooon for ArenaFighter wager integration
  */
 public interface Method {
     public Object getPlugin();

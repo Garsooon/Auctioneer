@@ -6,7 +6,7 @@
 
     <groupId>com.garsooon</groupId>
     <artifactId>Auctioneer</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <description>A simple chat based auction plugin for items in Beta 1.7.3 Minecraft with lots of settings for total control of its behavior.</description>
 
     <properties>
@@ -15,7 +15,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-<!--    TODO fix pom to install all required dependencies from lib/-->
     <repositories>
         <!-- Repository for resolving release dependencies -->
         <repository>
@@ -112,12 +111,13 @@
             <scope>provided</scope>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.retromc</groupId>-->
-<!--            <artifactId>poseidon-api</artifactId>-->
-<!--            <version>1.0.0</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>me.zavdav</groupId>
+            <artifactId>ZCore</artifactId>
+            <version>1.0.0-rc1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/ZCore.jar</systemPath>
+        </dependency>
 
     </dependencies>
 

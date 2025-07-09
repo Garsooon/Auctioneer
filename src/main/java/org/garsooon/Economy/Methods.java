@@ -1,7 +1,11 @@
-package com.garsooon.Economy;
+package org.garsooon.Economy;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.garsooon.Economy.methods.EE17;
+import org.garsooon.Economy.methods.Fundamentals;
+import org.garsooon.Economy.methods.ZCoreEco;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,7 +13,7 @@ import java.util.Set;
  * The <code>Methods</code> class initializes and manages economy Method implementations.
  * This version has been tailored for the ArenaFighter plugin with support for Essentials Economy.
  *
- * Originally created by Nijikokun. Modified by garsooon.
+ * Originally created by Nijikokun. Modified by Garsooon.
  */
 public class Methods {
     private static String version = null;
@@ -27,8 +31,8 @@ public class Methods {
      * Add any additional economy providers here.
      */
     public static void _init() {
-        addMethod("Essentials", new com.garsooon.Economy.methods.EE17());
-        addMethod("Fundamentals", new com.garsooon.Economy.methods.Fundamentals());
+        addMethod("Essentials", new org.garsooon.Economy.methods.EE17());
+        addMethod("ZCore", new org.garsooon.Economy.methods.ZCoreEco());
         Dependencies.add("MultiCurrency"); // Optional/future support
     }
 

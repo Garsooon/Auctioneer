@@ -1,10 +1,10 @@
-package com.garsooon.Economy.methods;
+package org.garsooon.Economy.methods;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
-import com.garsooon.Economy.Method;
+import org.garsooon.Economy.Method;
 
 import java.math.BigDecimal;
 
@@ -57,7 +57,8 @@ public class EE17 implements Method {
     }
 
     public boolean isCompatible(Plugin plugin) {
-        return plugin instanceof Essentials;
+        // This avoids referencing Essentials.class causing errors when ran in conjunction with other economy plugins.
+        return plugin.getDescription().getName().equalsIgnoreCase("Essentials");
     }
 
     public void setPlugin(Plugin plugin) {

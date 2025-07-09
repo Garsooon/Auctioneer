@@ -1,20 +1,22 @@
-package com.garsooon;
+package org.garsooon;
 
-import com.garsooon.Commands.AuctionCommand;
-import com.garsooon.Commands.BidCommand;
-import com.garsooon.Economy.Methods;
-import com.garsooon.Economy.Method;
+import org.garsooon.Commands.AuctionCommand;
+import org.garsooon.Commands.BidCommand;
+import org.garsooon.Economy.Method;
+import org.garsooon.Economy.Methods;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.Plugin;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.util.*;
 
+import static org.bukkit.Bukkit.getLogger;
+
 public class AuctionPlugin extends JavaPlugin {
     private static AuctionPlugin instance;
     private AuctionManager auctionManager;
     private Map<String, Object> config;
+    private Method economy;
 
     @Override
     public void onEnable() {
@@ -22,26 +24,20 @@ public class AuctionPlugin extends JavaPlugin {
         saveDefaultConfigYaml();
         loadConfigYaml();
 
-        // Debug: list all loaded plugins
-//        for (Plugin plugin : getServer().getPluginManager().getPlugins()) {
-//            System.out.println("[Auctioneer] Detected plugin: " + plugin.getDescription().getName());
-//        }
+        // Load economy before AuctionManager
+        boolean economyLoaded = Methods.setMethod(getServer().getPluginManager());
 
-        // Initialize economy
-        com.garsooon.Economy.Methods._init();
-        com.garsooon.Economy.Methods.setMethod(getServer().getPluginManager());
-
-        if (com.garsooon.Economy.Methods.getMethod() != null) {
-            getServer().getLogger().info("[Auctioneer] Hooked into economy: " +
-                    com.garsooon.Economy.Methods.getMethod().getName());
-        } else {
-            getServer().getLogger().severe("[Auctioneer] No compatible economy plugin found! Disabling plugin.");
+        if (!economyLoaded || Methods.getMethod() == null) {
+            getLogger().severe("[Auctioneer] No compatible economy plugin found! Disabling plugin.");
             getServer().getPluginManager().disablePlugin(this);
             return;
+        } else {
+            this.economy = Methods.getMethod();
+            getLogger().info("[Auctioneer] Economy method loaded: " + economy.getName() + " v" + economy.getVersion());
         }
 
         // Initialize commands
-        auctionManager = new AuctionManager(this);
+        auctionManager = new AuctionManager(this, this.economy);
         getCommand("auction").setExecutor(new AuctionCommand(this));
         getCommand("bid").setExecutor(new BidCommand(this));
 

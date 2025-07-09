@@ -1,6 +1,6 @@
-package com.garsooon.Economy.methods;
+package org.garsooon.Economy.methods;
 
-import com.garsooon.Economy.Method;
+import org.garsooon.Economy.Method;
 import com.earth2me.essentials.api.Economy;
 import com.johnymuffin.beta.fundamentals.api.EconomyAPI;
 import com.johnymuffin.beta.fundamentals.api.FundamentalsAPI;

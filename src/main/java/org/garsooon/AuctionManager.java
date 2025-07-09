@@ -1,7 +1,7 @@
-package com.garsooon;
+package org.garsooon;
 
-import com.garsooon.Economy.Method;
-import com.garsooon.Economy.Methods;
+import org.garsooon.Economy.Method;
+import org.garsooon.Economy.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -11,6 +11,7 @@ import java.util.*;
 
 public class AuctionManager {
     private final AuctionPlugin plugin;
+    private final Method economy;
     private Player currentSeller;
     private ItemStack currentItem;
     private double startPrice;
@@ -18,7 +19,7 @@ public class AuctionManager {
     private double highestBid;
     private int taskId;
     private int countdownTaskId = -1;
-    private final Method economy = Methods.getMethod();
+//    private final Method economy = Methods.getMethod();
     private long auctionEndTime;
     private final Map<UUID, Long> lastAuctionTime = new HashMap<>();
 
@@ -26,8 +27,9 @@ public class AuctionManager {
     private double minBidIncrement = 1.0; // fixed dollar amount
     private double percentBidIncrement = 0.0; // percent increment
 
-    public AuctionManager(AuctionPlugin plugin) {
+    public AuctionManager(AuctionPlugin plugin, Method economy) {
         this.plugin = plugin;
+        this.economy = economy;
     }
 
     /**
