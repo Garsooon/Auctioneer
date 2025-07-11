@@ -1,5 +1,5 @@
 name: Auctioneer
-version: 1.1
+version: 1.2
 main: org.garsooon.AuctionPlugin
 
 softdepend: [Essentials, Fundamentals, ZCore, MultiCurrency, iCo4, iCo5, iCo6, BOSE6, BOSE7]

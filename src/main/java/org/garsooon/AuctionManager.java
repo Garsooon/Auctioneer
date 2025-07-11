@@ -239,7 +239,14 @@ public class AuctionManager {
         if (currentItem == null) return;
 
         if (highestBidder != null) {
-            highestBidder.getInventory().addItem(currentItem);
+            HashMap<Integer, ItemStack> leftover = highestBidder.getInventory().addItem(currentItem);
+            if (!leftover.isEmpty()) {
+                for (ItemStack stack : leftover.values()) {
+                    highestBidder.getWorld().dropItemNaturally(highestBidder.getLocation(), stack);
+                }
+                highestBidder.sendMessage(ChatColor.YELLOW + "Your inventory was full! The auction item was dropped at your feet.");
+            }
+
             Bukkit.broadcastMessage(ChatColor.GOLD + highestBidder.getName() + " won the auction for $" + highestBid);
 
             if (economy != null) {
@@ -250,7 +257,14 @@ public class AuctionManager {
                 }
             }
         } else {
-            currentSeller.getInventory().addItem(currentItem);
+            HashMap<Integer, ItemStack> leftover = currentSeller.getInventory().addItem(currentItem);
+            if (!leftover.isEmpty()) {
+                for (ItemStack stack : leftover.values()) {
+                    currentSeller.getWorld().dropItemNaturally(currentSeller.getLocation(), stack);
+                }
+                currentSeller.sendMessage(ChatColor.YELLOW + "Your inventory was full! The item was dropped at your feet.");
+            }
+
             Bukkit.broadcastMessage(ChatColor.RED + "Auction ended with no bids.");
         }
 
@@ -270,6 +284,8 @@ public class AuctionManager {
         int data = item.getDurability();
 
         switch (id) {
+            case 337: return "Clay Ball";
+            case 82: return "Clay Block";
             case 35: return getWoolName(data);
             case 351: return getDyeName(data);
             case 17: return getLogName(data);
