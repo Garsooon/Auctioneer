@@ -5,6 +5,7 @@ import org.garsooon.Commands.BidCommand;
 import org.garsooon.Economy.Method;
 import org.garsooon.Economy.Methods;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.garsooon.Listener.PlayerJoinListener;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
@@ -40,6 +41,9 @@ public class AuctionPlugin extends JavaPlugin {
         auctionManager = new AuctionManager(this, this.economy);
         getCommand("auction").setExecutor(new AuctionCommand(this));
         getCommand("bid").setExecutor(new BidCommand(this));
+
+        // Register listener
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(auctionManager), this);
 
         getServer().getLogger().info("[Auctioneer] Plugin enabled.");
     }

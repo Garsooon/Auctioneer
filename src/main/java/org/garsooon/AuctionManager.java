@@ -280,6 +280,18 @@ public class AuctionManager {
         highestBidder = null;
     }
 
+    public String getCurrentItemDisplayName() {
+        return currentItem != null ? getItemDisplayName(currentItem) : "Unknown Item";
+    }
+
+    public String getCurrentSellerName() {
+        return currentSeller != null ? currentSeller.getName() : "Unknown";
+    }
+
+    public double getCurrentBid() {
+        return Math.floor(highestBid * 100) / 100.0;
+    }
+
     public boolean isAuctionRunning() {
         return currentItem != null;
     }
