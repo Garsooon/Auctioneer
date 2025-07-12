@@ -81,6 +81,17 @@ public class AuctionManager {
         currentSeller = seller;
         currentItem = item;
         startPrice = roundDown2(price);
+
+        Object maxStartPriceObj = plugin.getCustomConfig().get("max-start-price");
+        double maxStartPrice = 500.0;
+        if (maxStartPriceObj instanceof Number) {
+            maxStartPrice = ((Number) maxStartPriceObj).doubleValue();
+        }
+        if (startPrice > maxStartPrice) {
+            seller.sendMessage(ChatColor.RED + "The maximum auction start price is $" + String.format("%.2f", maxStartPrice));
+            return false;
+        }
+
         highestBid = startPrice;
         highestBidder = null;
         auctionEndTime = System.currentTimeMillis() + (duration * 1000L);
