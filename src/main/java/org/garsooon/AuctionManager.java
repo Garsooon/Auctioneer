@@ -80,14 +80,25 @@ public class AuctionManager {
 
         currentSeller = seller;
         currentItem = item;
-        startPrice = price;
-        highestBid = price;
+        startPrice = roundDown2(price);
+
+        Object maxStartPriceObj = plugin.getCustomConfig().get("max-start-price");
+        double maxStartPrice = 500.0;
+        if (maxStartPriceObj instanceof Number) {
+            maxStartPrice = ((Number) maxStartPriceObj).doubleValue();
+        }
+        if (startPrice > maxStartPrice) {
+            seller.sendMessage(ChatColor.RED + "The maximum auction start price is $" + String.format("%.2f", maxStartPrice));
+            return false;
+        }
+
+        highestBid = startPrice;
         highestBidder = null;
         auctionEndTime = System.currentTimeMillis() + (duration * 1000L);
 
         lastAuctionTime.put(seller.getUniqueId(), System.currentTimeMillis());
 
-        Bukkit.broadcastMessage(ChatColor.GREEN + seller.getName() + " is auctioning " + ChatColor.YELLOW + item.getAmount() + "x " + getItemDisplayName(item) + ChatColor.GREEN + " starting at $" + price);
+        Bukkit.broadcastMessage(ChatColor.GREEN + seller.getName() + " is auctioning " + ChatColor.YELLOW + item.getAmount() + "x " + getItemDisplayName(item) + ChatColor.GREEN + " starting at $" + startPrice);
 
         if (percentBidIncrement > 0.0) {
             Bukkit.broadcastMessage(ChatColor.GRAY + "Minimum bid increase is set to " + percentBidIncrement + "%");
@@ -147,18 +158,20 @@ public class AuctionManager {
     public boolean bid(Player bidder, double amount) {
         if (currentItem == null || bidder == currentSeller) return false;
 
+        amount = roundDown2(amount);
+
         if (highestBidder != null) {
-            // Only apply min/percent increment if there's already a bid (not first bid)
             double requiredMin = highestBid + minBidIncrement;
             if (percentBidIncrement > 0.0) {
                 requiredMin = highestBid + (highestBid * percentBidIncrement / 100.0);
             }
+            requiredMin = roundDown2(requiredMin);
+
             if (amount < requiredMin) {
                 bidder.sendMessage(ChatColor.RED + "You must bid at least $" + String.format("%.2f", requiredMin) + ".");
                 return false;
             }
         } else {
-            // First bid must at least be the starting price
             if (amount < startPrice) {
                 bidder.sendMessage(ChatColor.RED + "You must bid at least the starting price of $" + String.format("%.2f", startPrice) + ".");
                 return false;
@@ -211,6 +224,10 @@ public class AuctionManager {
         Bukkit.broadcastMessage(ChatColor.GRAY + "Auction time extended. " + (newRemaining / 1000) + " seconds remain.");
 
         return true;
+    }
+
+    private double roundDown2(double val) {
+        return Math.floor(val * 100.0) / 100.0;
     }
 
     private void scheduleAuctionEnd() {
@@ -272,6 +289,18 @@ public class AuctionManager {
         currentSeller = null;
         highestBid = 0;
         highestBidder = null;
+    }
+
+    public String getCurrentItemDisplayName() {
+        return currentItem != null ? getItemDisplayName(currentItem) : "Unknown Item";
+    }
+
+    public String getCurrentSellerName() {
+        return currentSeller != null ? currentSeller.getName() : "Unknown";
+    }
+
+    public double getCurrentBid() {
+        return Math.floor(highestBid * 100) / 100.0;
     }
 
     public boolean isAuctionRunning() {

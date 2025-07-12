@@ -12,6 +12,9 @@ time_add_per_bid: 10
 # Maximum total auction time in seconds
 max_auction_time: 120
 
+# Maximum auction starting price
+max-start-price: 100000
+
 blacklist:
   - BEDROCK
   - 44:4
