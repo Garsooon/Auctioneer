@@ -43,7 +43,7 @@ public class AuctionPlugin extends JavaPlugin {
         getCommand("bid").setExecutor(new BidCommand(this));
 
         // Register listener
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(auctionManager), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(this, auctionManager), this);
 
         getServer().getLogger().info("[Auctioneer] Plugin enabled.");
     }
