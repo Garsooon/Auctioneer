@@ -295,6 +295,10 @@ public class AuctionManager {
         return currentItem != null ? getItemDisplayName(currentItem) : "Unknown Item";
     }
 
+    public int getItemAmount() {
+        return currentItem != null ? currentItem.getAmount() : 0;
+    }
+
     public String getCurrentSellerName() {
         return currentSeller != null ? currentSeller.getName() : "Unknown";
     }
