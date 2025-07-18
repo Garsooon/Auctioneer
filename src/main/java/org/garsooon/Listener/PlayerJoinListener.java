@@ -25,12 +25,13 @@ public class PlayerJoinListener implements Listener {
             public void run() {
                 Player player = event.getPlayer();
                 String itemName = auctionManager.getCurrentItemDisplayName(); // You'll define this method below
+                int itemAmount = auctionManager.getItemAmount();
                 String sellerName = auctionManager.getCurrentSellerName();
                 double currentBid = auctionManager.getCurrentBid();
 
                 player.sendMessage(ChatColor.GOLD + "An auction is currently running!");
-                player.sendMessage(ChatColor.YELLOW + sellerName + " is auctioning " + itemName +
-                        " starting at $" + String.format("%.2f", currentBid));
+                player.sendMessage(ChatColor.GREEN + sellerName + " is auctioning " + ChatColor.YELLOW + itemAmount +
+                        "x " + itemName + ChatColor.GREEN + " starting at $" + String.format("%.2f", currentBid));
             }
         }, 1L); //Tick delay to stop showing above motd
     }
