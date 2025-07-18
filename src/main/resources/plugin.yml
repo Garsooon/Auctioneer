@@ -1,5 +1,5 @@
 name: Auctioneer
-version: 1.2
+version: 1.0.3
 main: org.garsooon.AuctionPlugin
 
 softdepend: [Essentials, Fundamentals, ZCore, MultiCurrency, iCo4, iCo5, iCo6, BOSE6, BOSE7]
@@ -13,8 +13,15 @@ commands:
     Usage: /bid <amount>
     description: Places a bid
     permission: auctioneer.player
+  auctionreset:
+    description: Reset the current auction
+    usage: /<command>
+    permission: auctioneer.admin
 
 permissions:
   auctioneer.player:
     description: Allows player to bid in auctions
+    default: op
+  auctioneer.admin:
+    description: Allows player to access debug commands
     default: op

@@ -291,6 +291,19 @@ public class AuctionManager {
         highestBidder = null;
     }
 
+    //This won't give items back, because its use case is for when an auction is completed but stuck.
+    public void forceEnd() {
+        this.currentItem = null;
+        this.currentSeller = null;
+        this.highestBidder = null;
+        this.highestBid = 0;
+        this.auctionEndTime = 0;
+        this.percentBidIncrement = 0.0;
+        this.minBidIncrement = 1.0;
+
+        Bukkit.broadcastMessage(ChatColor.RED + "The current auction has been forcibly reset by an admin.");
+    }
+
     public String getCurrentItemDisplayName() {
         return currentItem != null ? getItemDisplayName(currentItem) : "Unknown Item";
     }
