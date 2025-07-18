@@ -1,6 +1,7 @@
 package org.garsooon;
 
 import org.garsooon.Commands.AuctionCommand;
+import org.garsooon.Commands.AuctionResetCommand;
 import org.garsooon.Commands.BidCommand;
 import org.garsooon.Economy.Method;
 import org.garsooon.Economy.Methods;
@@ -41,6 +42,7 @@ public class AuctionPlugin extends JavaPlugin {
         auctionManager = new AuctionManager(this, this.economy);
         getCommand("auction").setExecutor(new AuctionCommand(this));
         getCommand("bid").setExecutor(new BidCommand(this));
+        getCommand("auctionreset").setExecutor(new AuctionResetCommand(this));
 
         // Register listener
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this, auctionManager), this);
