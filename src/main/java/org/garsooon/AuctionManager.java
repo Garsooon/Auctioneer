@@ -9,6 +9,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
+import static org.bukkit.Bukkit.getLogger;
+
 public class AuctionManager {
     private final AuctionPlugin plugin;
     private final Method economy;
@@ -22,6 +24,7 @@ public class AuctionManager {
 //    private final Method economy = Methods.getMethod();
     private long auctionEndTime;
     private final Map<UUID, Long> lastAuctionTime = new HashMap<>();
+    private long auctionStartTime = 0;
 
     // These control minimum bid increment rules
     private double minBidIncrement = 1.0; // fixed dollar amount
@@ -76,6 +79,9 @@ public class AuctionManager {
         Object durationObj = plugin.getCustomConfig().get("duration");
         if (durationObj instanceof Integer) duration = (Integer) durationObj;
 
+        auctionStartTime = System.currentTimeMillis();
+        auctionEndTime = auctionStartTime + (duration * 1000L);
+
         parseIncrement(incrementArg);
 
         currentSeller = seller;
@@ -110,7 +116,6 @@ public class AuctionManager {
 
         return true;
     }
-
 
     // Parses the increment argument into either fixed or percentage increment.
     // Tried to enforce whole numbers as rarely the bid amount would not update when decimals were used
@@ -302,6 +307,25 @@ public class AuctionManager {
         this.minBidIncrement = 1.0;
 
         Bukkit.broadcastMessage(ChatColor.RED + "The current auction has been forcibly reset by an admin.");
+    }
+
+    public void cleanupStuckAuction() {
+        if (currentItem == null) return;
+
+        long maxAuctionTime = 30; // fallback
+        Object rawMax = plugin.getCustomConfig().get("max_auction_time");
+        if (rawMax instanceof Integer) {
+            maxAuctionTime = (Integer) rawMax;
+        }
+
+        long now = System.currentTimeMillis();
+        long gracePeriodEnd = auctionEndTime + (maxAuctionTime * 1000L);
+
+        if (now > gracePeriodEnd && auctionStartTime < (now - (maxAuctionTime * 1000L))) {
+            Bukkit.broadcastMessage(ChatColor.RED + "Stuck auction forcibly reset due to timeout.");
+            getLogger().warning("[Auctioneer] An auction was forcibly reset due to timeout.");
+            forceEnd();
+        }
     }
 
     public String getCurrentItemDisplayName() {
