@@ -1,13 +1,14 @@
 package org.garsooon;
 
 import org.garsooon.Economy.Method;
-import org.garsooon.Economy.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+
+import static org.bukkit.Bukkit.getLogger;
 
 public class AuctionManager {
     private final AuctionPlugin plugin;
@@ -22,6 +23,7 @@ public class AuctionManager {
 //    private final Method economy = Methods.getMethod();
     private long auctionEndTime;
     private final Map<UUID, Long> lastAuctionTime = new HashMap<>();
+    private long auctionStartTime = 0;
 
     // These control minimum bid increment rules
     private double minBidIncrement = 1.0; // fixed dollar amount
@@ -76,6 +78,9 @@ public class AuctionManager {
         Object durationObj = plugin.getCustomConfig().get("duration");
         if (durationObj instanceof Integer) duration = (Integer) durationObj;
 
+        auctionStartTime = System.currentTimeMillis();
+        auctionEndTime = auctionStartTime + (duration * 1000L);
+
         parseIncrement(incrementArg);
 
         currentSeller = seller;
@@ -111,9 +116,9 @@ public class AuctionManager {
         return true;
     }
 
-
     // Parses the increment argument into either fixed or percentage increment.
     // Tried to enforce whole numbers as rarely the bid amount would not update when decimals were used
+    @SuppressWarnings("UnnecessaryLocalVariable")
     private void parseIncrement(String arg) {
         if (arg == null || arg.isEmpty()) {
             minBidIncrement = 1.0;
@@ -289,6 +294,38 @@ public class AuctionManager {
         currentSeller = null;
         highestBid = 0;
         highestBidder = null;
+    }
+
+    //This won't give items back, because its use case is for when an auction is completed but stuck.
+    public void forceEnd() {
+        this.currentItem = null;
+        this.currentSeller = null;
+        this.highestBidder = null;
+        this.highestBid = 0;
+        this.auctionEndTime = 0;
+        this.percentBidIncrement = 0.0;
+        this.minBidIncrement = 1.0;
+
+        Bukkit.broadcastMessage(ChatColor.RED + "The current auction has been forcibly reset by an admin.");
+    }
+
+    public void cleanupStuckAuction() {
+        if (currentItem == null) return;
+
+        long maxAuctionTime = 30; // fallback
+        Object rawMax = plugin.getCustomConfig().get("max_auction_time");
+        if (rawMax instanceof Integer) {
+            maxAuctionTime = (Integer) rawMax;
+        }
+
+        long now = System.currentTimeMillis();
+        long gracePeriodEnd = auctionEndTime + (maxAuctionTime * 1000L);
+
+        if (now > gracePeriodEnd && auctionStartTime < (now - (maxAuctionTime * 1000L))) {
+            Bukkit.broadcastMessage(ChatColor.RED + "Stuck auction forcibly reset due to timeout.");
+            getLogger().warning("[Auctioneer] An auction was forcibly reset due to timeout.");
+            forceEnd();
+        }
     }
 
     public String getCurrentItemDisplayName() {

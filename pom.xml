@@ -6,7 +6,7 @@
 
     <groupId>com.garsooon</groupId>
     <artifactId>Auctioneer</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <description>A simple chat based auction plugin for items in Beta 1.7.3 Minecraft with lots of settings for total control of its behavior.</description>
 
     <properties>

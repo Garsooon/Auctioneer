@@ -21,18 +21,16 @@ public class PlayerJoinListener implements Listener {
     public void onPlayerJoin(final PlayerJoinEvent event) {
         if (!auctionManager.isAuctionRunning()) return;
 
-        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-            public void run() {
-                Player player = event.getPlayer();
-                String itemName = auctionManager.getCurrentItemDisplayName(); // You'll define this method below
-                int itemAmount = auctionManager.getItemAmount();
-                String sellerName = auctionManager.getCurrentSellerName();
-                double currentBid = auctionManager.getCurrentBid();
+        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            Player player = event.getPlayer();
+            String itemName = auctionManager.getCurrentItemDisplayName();
+            int itemAmount = auctionManager.getItemAmount();
+            String sellerName = auctionManager.getCurrentSellerName();
+            double currentBid = auctionManager.getCurrentBid();
 
-                player.sendMessage(ChatColor.GOLD + "An auction is currently running!");
-                player.sendMessage(ChatColor.GREEN + sellerName + " is auctioning " + ChatColor.YELLOW + itemAmount +
-                        "x " + itemName + ChatColor.GREEN + " starting at $" + String.format("%.2f", currentBid));
-            }
+            player.sendMessage(ChatColor.GOLD + "An auction is currently running!");
+            player.sendMessage(ChatColor.GREEN + sellerName + " is auctioning " + ChatColor.YELLOW + itemAmount +
+                    "x " + itemName + ChatColor.GREEN + " starting at $" + String.format("%.2f", currentBid));
         }, 1L); //Tick delay to stop showing above motd
     }
 }

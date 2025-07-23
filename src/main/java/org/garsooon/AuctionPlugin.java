@@ -1,6 +1,8 @@
 package org.garsooon;
 
+import org.bukkit.Bukkit;
 import org.garsooon.Commands.AuctionCommand;
+import org.garsooon.Commands.AuctionResetCommand;
 import org.garsooon.Commands.BidCommand;
 import org.garsooon.Economy.Method;
 import org.garsooon.Economy.Methods;
@@ -13,10 +15,12 @@ import java.util.*;
 
 import static org.bukkit.Bukkit.getLogger;
 
+@SuppressWarnings({"ResultOfMethodCallIgnored", "CallToPrintStackTrace", "IOStreamConstructor"})
 public class AuctionPlugin extends JavaPlugin {
     private static AuctionPlugin instance;
     private AuctionManager auctionManager;
     private Map<String, Object> config;
+    @SuppressWarnings("FieldCanBeLocal")
     private Method economy;
 
     @Override
@@ -41,11 +45,14 @@ public class AuctionPlugin extends JavaPlugin {
         auctionManager = new AuctionManager(this, this.economy);
         getCommand("auction").setExecutor(new AuctionCommand(this));
         getCommand("bid").setExecutor(new BidCommand(this));
+        getCommand("auctionreset").setExecutor(new AuctionResetCommand(this));
 
         // Register listener
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this, auctionManager), this);
 
         getServer().getLogger().info("[Auctioneer] Plugin enabled.");
+
+        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> auctionManager.cleanupStuckAuction(), 20L * 30, 20L * 30); // 30 Seconds
     }
 
     @Override
@@ -75,6 +82,7 @@ public class AuctionPlugin extends JavaPlugin {
         }
     }
 
+    @SuppressWarnings("VulnerableCodeUsages")
     private void loadConfigYaml() {
         File configFile = new File(getDataFolder(), "config.yml");
         if (!configFile.exists()) {
@@ -102,6 +110,7 @@ public class AuctionPlugin extends JavaPlugin {
         return config;
     }
 
+    @SuppressWarnings("unused")
     public static AuctionPlugin getInstance() {
         return instance;
     }
