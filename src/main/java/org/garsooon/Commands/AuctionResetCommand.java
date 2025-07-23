@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AuctionResetCommand implements CommandExecutor {
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private final AuctionPlugin plugin;
     private final AuctionManager auctionManager;
     private final Set<String> confirmationSet = new HashSet<>();
