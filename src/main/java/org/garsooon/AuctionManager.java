@@ -1,7 +1,6 @@
 package org.garsooon;
 
 import org.garsooon.Economy.Method;
-import org.garsooon.Economy.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -119,6 +118,7 @@ public class AuctionManager {
 
     // Parses the increment argument into either fixed or percentage increment.
     // Tried to enforce whole numbers as rarely the bid amount would not update when decimals were used
+    @SuppressWarnings("UnnecessaryLocalVariable")
     private void parseIncrement(String arg) {
         if (arg == null || arg.isEmpty()) {
             minBidIncrement = 1.0;

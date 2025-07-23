@@ -15,10 +15,12 @@ import java.util.*;
 
 import static org.bukkit.Bukkit.getLogger;
 
+@SuppressWarnings({"ResultOfMethodCallIgnored", "CallToPrintStackTrace", "IOStreamConstructor"})
 public class AuctionPlugin extends JavaPlugin {
     private static AuctionPlugin instance;
     private AuctionManager auctionManager;
     private Map<String, Object> config;
+    @SuppressWarnings("FieldCanBeLocal")
     private Method economy;
 
     @Override
@@ -50,12 +52,7 @@ public class AuctionPlugin extends JavaPlugin {
 
         getServer().getLogger().info("[Auctioneer] Plugin enabled.");
 
-        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-            @Override
-            public void run() {
-                auctionManager.cleanupStuckAuction();
-            }
-        }, 20L * 30, 20L * 30); // 30 Seconds
+        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> auctionManager.cleanupStuckAuction(), 20L * 30, 20L * 30); // 30 Seconds
     }
 
     @Override
@@ -85,6 +82,7 @@ public class AuctionPlugin extends JavaPlugin {
         }
     }
 
+    @SuppressWarnings("VulnerableCodeUsages")
     private void loadConfigYaml() {
         File configFile = new File(getDataFolder(), "config.yml");
         if (!configFile.exists()) {
@@ -112,6 +110,7 @@ public class AuctionPlugin extends JavaPlugin {
         return config;
     }
 
+    @SuppressWarnings("unused")
     public static AuctionPlugin getInstance() {
         return instance;
     }
