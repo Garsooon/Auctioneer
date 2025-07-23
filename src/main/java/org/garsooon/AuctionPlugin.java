@@ -1,5 +1,6 @@
 package org.garsooon;
 
+import org.bukkit.Bukkit;
 import org.garsooon.Commands.AuctionCommand;
 import org.garsooon.Commands.AuctionResetCommand;
 import org.garsooon.Commands.BidCommand;
@@ -48,6 +49,13 @@ public class AuctionPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this, auctionManager), this);
 
         getServer().getLogger().info("[Auctioneer] Plugin enabled.");
+
+        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+            @Override
+            public void run() {
+                auctionManager.cleanupStuckAuction();
+            }
+        }, 20L * 30, 20L * 30); // 30 Seconds
     }
 
     @Override
