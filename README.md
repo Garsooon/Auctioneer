@@ -27,7 +27,8 @@ It lets players auction off items they’re holding, with configurable settings 
 ## Installation
 
 1. Download `Auctioneer.jar` from the [releases](https://github.com/Garsooon/Auctioneer/releases).
-2. Drop it into your `plugins` folder.
+2. Drop it into your `plugins` folder.</br>
+2.1. If updating from a previous version either regenerate your config file by deleting it in `plugins/Auctioneer/config.yml` or adding the new config.yml text and value
 3. Make sure [Poseidon](https://github.com/retromcorg/Project-Poseidon) is installed.
 4. Restart your server.
 
