@@ -103,7 +103,27 @@ public class AuctionManager {
 
         lastAuctionTime.put(seller.getUniqueId(), System.currentTimeMillis());
 
-        Bukkit.broadcastMessage(ChatColor.GREEN + seller.getName() + " is auctioning " + ChatColor.YELLOW + item.getAmount() + "x " + getItemDisplayName(item) + ChatColor.GREEN + " starting at $" + startPrice);
+        //noinspection ExtractMethodRecommender
+        String durabilityInfo = "";
+        short dur = item.getDurability();
+        short maxDur = item.getType().getMaxDurability();
+
+        if (maxDur > 0) {
+            int remaining = maxDur - dur;
+            int pct = (int) ((remaining * 100.0) / maxDur);
+
+            ChatColor durColor = ChatColor.GREEN;
+            if (pct <= 25) {
+                durColor = ChatColor.RED;
+            } else if (pct <= 50) {
+                durColor = ChatColor.GOLD;
+            } else if (pct <= 75) {
+                durColor = ChatColor.YELLOW;
+            }
+            durabilityInfo = durColor + " [" + remaining + "/" + maxDur + " durability]";
+        }
+
+        Bukkit.broadcastMessage(ChatColor.GREEN + seller.getName() + " is auctioning " + ChatColor.YELLOW + item.getAmount() + "x " + getItemDisplayName(item) + durabilityInfo + ChatColor.GREEN + " starting at $" + startPrice);
 
         if (percentBidIncrement > 0.0) {
             Bukkit.broadcastMessage(ChatColor.GRAY + "Minimum bid increase is set to " + percentBidIncrement + "%");
@@ -342,6 +362,10 @@ public class AuctionManager {
 
     public double getCurrentBid() {
         return Math.floor(highestBid * 100) / 100.0;
+    }
+
+    public ItemStack getCurrentItem() {
+        return currentItem;
     }
 
     public boolean isAuctionRunning() {
