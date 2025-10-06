@@ -6,7 +6,7 @@
 
     <groupId>com.garsooon</groupId>
     <artifactId>Auctioneer</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <description>A simple chat based auction plugin for items in Beta 1.7.3 Minecraft with lots of settings for total control of its behavior.</description>
 
     <properties>
@@ -114,7 +114,7 @@
         <dependency>
             <groupId>me.zavdav</groupId>
             <artifactId>ZCore</artifactId>
-            <version>1.0.0-rc1</version>
+            <version>0.22.1</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/ZCore.jar</systemPath>
         </dependency>

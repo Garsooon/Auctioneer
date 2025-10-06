@@ -2,23 +2,22 @@ package org.garsooon.Economy.methods;
 
 
 import me.zavdav.zcore.ZCore;
-import me.zavdav.zcore.api.Economy;
-import me.zavdav.zcore.util.PlayerUtils;
+import me.zavdav.zcore.economy.BankAccount;
+import me.zavdav.zcore.economy.PersonalAccount;
+import me.zavdav.zcore.player.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.garsooon.Economy.Method;
 
-import java.math.BigDecimal;
-import java.util.UUID;
 
-//Place holder for Zcore rewrite
+import java.math.BigDecimal;
 
 public class ZCoreEco implements Method {
 
     private ZCore zcore;
 
-    public Object getPlugin() {
-        return this.zcore;
+    public ZCore getPlugin() {
+        return zcore;
     }
 
     public String getName() {
@@ -34,148 +33,171 @@ public class ZCoreEco implements Method {
     }
 
     public String format(double amount) {
-        return Economy.formatBalance(BigDecimal.valueOf(amount));
+        return ZCore.formatCurrency(BigDecimal.valueOf(amount));
     }
 
     public boolean hasBanks() {
-        return false;
+        return true;
     }
 
     public boolean hasBank(String bank, World world) {
-        return false;
+        return ZCore.getBank(bank) != null;
     }
 
     public boolean hasAccount(String name, World world) {
-        try {
-            UUID uuid = PlayerUtils.getUUIDFromUsername(name);
-            return Economy.userExists(uuid);
-        } catch (Throwable e) {
-            return false;
-        }
+        return ZCore.getOfflinePlayer(name) != null;
     }
 
     public boolean hasBankAccount(String bank, String name, World world) {
-        return false;
+        BankAccount account = ZCore.getBank(bank);
+        return account != null && account.getOwner().getName().equalsIgnoreCase(name);
     }
 
     public MethodAccount getAccount(String name, World world) {
-        if (!hasAccount(name, world)) return null;
-        return new ZEcoAccount(PlayerUtils.getUUIDFromUsername(name));
+        OfflinePlayer player = ZCore.getOfflinePlayer(name);
+        return player != null ? new ZCorePersonalAccount(player.getAccount()) : null;
     }
 
     public MethodBankAccount getBankAccount(String bank, String name, World world) {
-        return null;
+        BankAccount account = ZCore.getBank(bank);
+        return account != null && account.getOwner().getName().equalsIgnoreCase(name) ? new ZCoreBankAccount(account) : null;
     }
 
     public boolean isCompatible(Plugin plugin) {
-        return plugin.getDescription().getName().equalsIgnoreCase("ZCore") &&
-               plugin instanceof ZCore;
+        return plugin instanceof ZCore;
     }
 
     public void setPlugin(Plugin plugin) {
-        zcore = (ZCore) plugin;
+        if (!isCompatible(plugin)) return;
+        this.zcore = (ZCore) plugin;
     }
 
-    public static class ZEcoAccount implements MethodAccount {
+    private static class ZCorePersonalAccount implements MethodAccount {
 
-        private final UUID uuid;
+        private final PersonalAccount account;
 
-        public ZEcoAccount(UUID uuid) {
-            this.uuid = uuid;
+        ZCorePersonalAccount(PersonalAccount account) {
+            this.account = account;
         }
 
         public double balance(World world) {
-            try {
-                return Economy.getBalance(uuid).doubleValue();
-            } catch (Throwable e) {
-                e.printStackTrace();
-                return 0;
-            }
+            return account.getBalance().doubleValue();
         }
 
         public boolean set(double amount, World world) {
-            try {
-                Economy.setBalance(uuid, BigDecimal.valueOf(amount));
-                return true;
-            } catch (Throwable e) {
-                e.printStackTrace();
-                return false;
-            }
+            return account.set(BigDecimal.valueOf(amount));
         }
 
         public boolean add(double amount, World world) {
-            try {
-                Economy.addBalance(uuid, BigDecimal.valueOf(amount));
-                return true;
-            } catch (Throwable e) {
-                e.printStackTrace();
-                return false;
-            }
+            account.add(BigDecimal.valueOf(amount));
+            return true;
         }
 
         public boolean subtract(double amount, World world) {
-            try {
-                Economy.subtractBalance(uuid, BigDecimal.valueOf(amount));
-                return true;
-            } catch (Throwable e) {
-                e.printStackTrace();
-                return false;
-            }
+            return account.subtract(BigDecimal.valueOf(amount));
         }
 
         public boolean multiply(double amount, World world) {
-            try {
-                Economy.multiplyBalance(uuid, BigDecimal.valueOf(amount));
-                return true;
-            } catch (Throwable e) {
-                e.printStackTrace();
-                return false;
-            }
+            return account.multiply(BigDecimal.valueOf(amount));
         }
 
         public boolean divide(double amount, World world) {
-            try {
-                Economy.divideBalance(uuid, BigDecimal.valueOf(amount));
-                return true;
-            } catch (Throwable e) {
-                e.printStackTrace();
-                return false;
-            }
+            return account.divide(BigDecimal.valueOf(amount));
         }
 
         public boolean hasEnough(double amount, World world) {
-            try {
-                return Economy.hasEnough(uuid, BigDecimal.valueOf(amount));
-            } catch (Throwable e) {
-                e.printStackTrace();
-                return false;
-            }
+            return account.getBalance().compareTo(BigDecimal.valueOf(amount)) >= 0;
         }
 
         public boolean hasOver(double amount, World world) {
-            try {
-                return Economy.hasOver(uuid, BigDecimal.valueOf(amount));
-            } catch (Throwable e) {
-                e.printStackTrace();
-                return false;
-            }
+            return account.getBalance().compareTo(BigDecimal.valueOf(amount)) > 0;
         }
 
         public boolean hasUnder(double amount, World world) {
-            try {
-                return Economy.hasUnder(uuid, BigDecimal.valueOf(amount));
-            } catch (Throwable e) {
-                e.printStackTrace();
-                return false;
-            }
+            return account.getBalance().compareTo(BigDecimal.valueOf(amount)) < 0;
         }
 
         public boolean isNegative(World world) {
-            return false;
+            return account.getBalance().compareTo(BigDecimal.ZERO) < 0;
         }
 
         public boolean remove() {
             return false;
         }
+
+        @Override
+        public String toString() {
+            return account.toString();
+        }
+
     }
+
+    private static class ZCoreBankAccount implements MethodBankAccount {
+
+        private final BankAccount account;
+
+        ZCoreBankAccount(BankAccount account) {
+            this.account = account;
+        }
+
+        public double balance() {
+            return account.getBalance().doubleValue();
+        }
+
+        public String getBankName() {
+            return account.getName();
+        }
+
+        public int getBankId() {
+            return 0;
+        }
+
+        public boolean set(double amount) {
+            return account.set(BigDecimal.valueOf(amount));
+        }
+
+        public boolean add(double amount) {
+            account.add(BigDecimal.valueOf(amount));
+            return true;
+        }
+
+        public boolean subtract(double amount) {
+            return account.subtract(BigDecimal.valueOf(amount));
+        }
+
+        public boolean multiply(double amount) {
+            return account.multiply(BigDecimal.valueOf(amount));
+        }
+
+        public boolean divide(double amount) {
+            return account.divide(BigDecimal.valueOf(amount));
+        }
+
+        public boolean hasEnough(double amount) {
+            return account.getBalance().compareTo(BigDecimal.valueOf(amount)) >= 0;
+        }
+
+        public boolean hasOver(double amount) {
+            return account.getBalance().compareTo(BigDecimal.valueOf(amount)) > 0;
+        }
+
+        public boolean hasUnder(double amount) {
+            return account.getBalance().compareTo(BigDecimal.valueOf(amount)) < 0;
+        }
+
+        public boolean isNegative() {
+            return account.getBalance().compareTo(BigDecimal.ZERO) < 0;
+        }
+
+        public boolean remove() {
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            return account.toString();
+        }
+
+    }
+
 }
