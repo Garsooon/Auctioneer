@@ -84,6 +84,7 @@ public class AuctionManager {
         parseIncrement(incrementArg);
 
         currentSeller = seller;
+        // currentItem defines if auctions are started within isAuctionRunning()
         currentItem = item;
         startPrice = roundDown2(price);
 
@@ -356,12 +357,16 @@ public class AuctionManager {
         return currentItem != null ? currentItem.getAmount() : 0;
     }
 
-    public String getCurrentSellerName() {
-        return currentSeller != null ? currentSeller.getName() : "Unknown";
+    public Player getCurrentSeller() { return currentSeller; }
+
+    public Player getCurrentHighestBidder() { return highestBidder; }
+
+    public double getStartPrice() {
+        return roundDown2(highestBid);
     }
 
     public double getCurrentBid() {
-        return Math.floor(highestBid * 100) / 100.0;
+        return roundDown2(highestBid);
     }
 
     public ItemStack getCurrentItem() {
@@ -370,6 +375,10 @@ public class AuctionManager {
 
     public boolean isAuctionRunning() {
         return currentItem != null;
+    }
+
+    public long getAuctionEndTime() {
+        return auctionEndTime;
     }
 
     // Handler and case returns for items with internal data values
