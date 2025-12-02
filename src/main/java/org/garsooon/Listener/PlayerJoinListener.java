@@ -41,9 +41,9 @@ public class PlayerJoinListener implements Listener {
                 int pct = (int) ((remaining * 100.0) / maxDur);
                 ChatColor durColor = ChatColor.GREEN;
                 if (pct <= 25) {
-//                    durColor = ChatColor.RED;
-//                } else if (pct <= 50) {
-//                    durColor = ChatColor.GOLD;
+                    durColor = ChatColor.RED;
+                } else if (pct <= 50) {
+                    durColor = ChatColor.GOLD;
                 } else if (pct <= 75) {
                     durColor = ChatColor.YELLOW;
                 }
@@ -53,7 +53,7 @@ public class PlayerJoinListener implements Listener {
 
             player.sendMessage(ChatColor.GOLD + "An auction is currently running!");
             player.sendMessage(ChatColor.GREEN + seller.getName() + " is auctioning " + ChatColor.YELLOW + itemAmount +
-                    "x " + itemName + ChatColor.GREEN + " starting at $" + startPrice);
+                    "x " + itemName + ChatColor.GREEN + durabilityInfo + " starting at $" + startPrice);
 
             if (highestBidder != null) {
                 player.sendMessage(ChatColor.AQUA + "Current highest bid is $" + currentBid + " by " + highestBidder.getName());
