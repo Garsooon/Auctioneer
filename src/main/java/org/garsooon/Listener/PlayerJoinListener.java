@@ -53,7 +53,7 @@ public class PlayerJoinListener implements Listener {
 
             player.sendMessage(ChatColor.GOLD + "An auction is currently running!");
             player.sendMessage(ChatColor.GREEN + seller.getName() + " is auctioning " + ChatColor.YELLOW + itemAmount +
-                    "x " + itemName + ChatColor.GREEN + durabilityInfo + " starting at $" + startPrice);
+                    "x " + itemName + durabilityInfo + ChatColor.GREEN + " starting at $" + startPrice);
 
             if (highestBidder != null) {
                 player.sendMessage(ChatColor.AQUA + "Current highest bid is $" + currentBid + " by " + highestBidder.getName());
