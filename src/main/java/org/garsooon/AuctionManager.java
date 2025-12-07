@@ -78,13 +78,6 @@ public class AuctionManager {
         Object durationObj = plugin.getCustomConfig().get("duration");
         if (durationObj instanceof Integer) duration = (Integer) durationObj;
 
-        auctionStartTime = System.currentTimeMillis();
-        auctionEndTime = auctionStartTime + (duration * 1000L);
-
-        parseIncrement(incrementArg);
-
-        currentSeller = seller;
-        currentItem = item;
         startPrice = roundDown2(price);
 
         Object maxStartPriceObj = plugin.getCustomConfig().get("max-start-price");
@@ -96,6 +89,14 @@ public class AuctionManager {
             seller.sendMessage(ChatColor.RED + "The maximum auction start price is $" + String.format("%.2f", maxStartPrice));
             return false;
         }
+
+        auctionStartTime = System.currentTimeMillis();
+        auctionEndTime = auctionStartTime + (duration * 1000L);
+
+        parseIncrement(incrementArg);
+
+        currentSeller = seller;
+        currentItem = item;
 
         highestBid = startPrice;
         highestBidder = null;
