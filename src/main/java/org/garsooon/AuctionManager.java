@@ -80,13 +80,17 @@ public class AuctionManager {
 
         startPrice = roundDown2(price);
 
-        Object maxStartPriceObj = plugin.getCustomConfig().get("max-start-price");
-        double maxStartPrice = 500.0;
-        if (maxStartPriceObj instanceof Number) {
-            maxStartPrice = ((Number) maxStartPriceObj).doubleValue();
+        double minStartPrice = parseConfigDouble("min-start-price", 0);
+        double maxStartPrice = parseConfigDouble("max-start-price", 100000);
+        double minMinBidIncrease = parseConfigDouble("min-bid-increase", 1);
+        double maxBidIncrease = parseConfigDouble("max-bid-increase", 0);
+
+        if (startPrice < minStartPrice) {
+            seller.sendMessage(ChatColor.RED + "The minimum auction start price is $" + roundDown2(minStartPrice));
+            return false;
         }
-        if (startPrice > maxStartPrice) {
-            seller.sendMessage(ChatColor.RED + "The maximum auction start price is $" + String.format("%.2f", maxStartPrice));
+        if (startPrice > maxStartPrice && maxStartPrice != 0) {
+            seller.sendMessage(ChatColor.RED + "The maximum auction start price is $" + roundDown2(maxStartPrice));
             return false;
         }
 
@@ -94,6 +98,15 @@ public class AuctionManager {
         auctionEndTime = auctionStartTime + (duration * 1000L);
 
         parseIncrement(incrementArg);
+
+        if (minBidIncrement < minMinBidIncrease) {
+            seller.sendMessage(ChatColor.RED + "The minimum auction bid increase is $" + roundDown2(minMinBidIncrease));
+            return false;
+        }
+        if (minBidIncrement > maxBidIncrease && maxBidIncrease != 0) {
+            seller.sendMessage(ChatColor.RED + "The maximum auction bid increase is $" + roundDown2(maxBidIncrease));
+            return false;
+        }
 
         currentSeller = seller;
         currentItem = item;
@@ -178,6 +191,15 @@ public class AuctionManager {
             minBidIncrement = 1.0;
             percentBidIncrement = 0.0;
         }
+    }
+
+    public double parseConfigDouble(String configName, double defaultNumber) {
+        Object configDoubleObj = plugin.getCustomConfig().get(configName);
+        double configDouble = defaultNumber;
+        if (configDoubleObj  instanceof Number) {
+            configDouble = ((Number) configDoubleObj).doubleValue();
+        }
+        return configDouble;
     }
 
     //Handles placing a bid on the current auction.
