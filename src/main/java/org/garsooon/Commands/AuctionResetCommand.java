@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.garsooon.AuctionPlugin;
 import org.garsooon.AuctionManager;
@@ -16,6 +17,7 @@ public class AuctionResetCommand implements CommandExecutor {
     private final AuctionPlugin plugin;
     private final AuctionManager auctionManager;
     private final Set<String> confirmationSet = new HashSet<>();
+    private boolean confirmationConsole;
 
     public AuctionResetCommand(AuctionPlugin plugin) {
         this.plugin = plugin;
@@ -24,30 +26,39 @@ public class AuctionResetCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "Only players can use this command.");
-            return true;
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+
+            if (!player.hasPermission("auctioneer.admin")) {
+                player.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
+                return true;
+            }
+
+            String name = player.getName();
+
+            if (!confirmationSet.contains(name)) {
+                confirmationSet.add(name);
+                sender.sendMessage(ChatColor.RED + "This will reset the current auction and NOT give items or");
+                sender.sendMessage(ChatColor.RED + "money back! Run the command again to confirm.");
+                return true;
+            }
+            confirmationSet.remove(name);
+        }
+        else if (sender instanceof ConsoleCommandSender) {
+            if (!confirmationConsole) {
+                confirmationConsole = true;
+                sender.sendMessage(ChatColor.RED + "This will reset the current auction and NOT give items or");
+                sender.sendMessage(ChatColor.RED + "money back! Run the command again to confirm.");
+                return true;
+            }
+            confirmationConsole = false;
+        }
+        else {
+            return false;
         }
 
-        Player player = (Player) sender;
-
-        if (!player.hasPermission("auctioneer.admin")) {
-            player.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
-            return true;
-        }
-
-        String name = player.getName();
-
-        if (!confirmationSet.contains(name)) {
-            confirmationSet.add(name);
-            player.sendMessage(ChatColor.RED + "This will reset the current auction and NOT give items or");
-            player.sendMessage(ChatColor.RED + "money back! Run the command again to confirm.");
-            return true;
-        }
-
-        confirmationSet.remove(name);
         auctionManager.forceEnd();
-        player.sendMessage(ChatColor.GREEN + "Auction forcibly reset.");
+        sender.sendMessage(ChatColor.GREEN + "Auction forcibly reset.");
         return true;
     }
 }

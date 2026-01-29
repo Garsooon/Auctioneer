@@ -1,5 +1,6 @@
 package org.garsooon;
 
+import org.bukkit.craftbukkit.CraftServer;
 import org.garsooon.Economy.Method;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -124,12 +125,12 @@ public class AuctionManager {
             durabilityInfo = durColor + " [" + remaining + "/" + maxDur + " durability]";
         }
 
-        Bukkit.broadcastMessage(ChatColor.GREEN + seller.getName() + " is auctioning " + ChatColor.YELLOW + item.getAmount() + "x " + getItemDisplayName(item) + durabilityInfo + ChatColor.GREEN + " starting at $" + startPrice);
+        broadcast(ChatColor.GREEN + seller.getName() + " is auctioning " + ChatColor.YELLOW + item.getAmount() + "x " + getItemDisplayName(item) + durabilityInfo + ChatColor.GREEN + " starting at $" + startPrice);
 
         if (percentBidIncrement > 0.0) {
-            Bukkit.broadcastMessage(ChatColor.GRAY + "Minimum bid increase is set to " + percentBidIncrement + "%");
+            broadcast(ChatColor.GRAY + "Minimum bid increase is set to " + percentBidIncrement + "%");
         } else {
-            Bukkit.broadcastMessage(ChatColor.GRAY + "Minimum bid increase is set to $" + minBidIncrement);
+            broadcast(ChatColor.GRAY + "Minimum bid increase is set to $" + minBidIncrement);
         }
 
         scheduleAuctionEnd();
@@ -225,7 +226,7 @@ public class AuctionManager {
 
         highestBid = amount;
         highestBidder = bidder;
-        Bukkit.broadcastMessage(ChatColor.AQUA + bidder.getName() + " bids $" + amount);
+        broadcast(ChatColor.AQUA + bidder.getName() + " bids $" + amount);
 
         int timeAddPerBid = 10;
         Object bidAddObj = plugin.getCustomConfig().get("time_add_per_bid");
@@ -247,7 +248,7 @@ public class AuctionManager {
         if (countdownTaskId != -1) Bukkit.getScheduler().cancelTask(countdownTaskId);
         scheduleAuctionEnd();
 
-        Bukkit.broadcastMessage(ChatColor.GRAY + "Auction time extended. " + (newRemaining / 1000) + " seconds remain.");
+        broadcast(ChatColor.GRAY + "Auction time extended. " + (newRemaining / 1000) + " seconds remain.");
 
         return true;
     }
@@ -270,7 +271,7 @@ public class AuctionManager {
                 }
                 long timeLeft = (auctionEndTime - System.currentTimeMillis()) / 1000L;
                 if ((timeLeft == 10 || timeLeft == 5) && lastAnnounced != (int) timeLeft) {
-                    Bukkit.broadcastMessage(ChatColor.GOLD + "Auction ends in " + timeLeft + " seconds!");
+                    broadcast(ChatColor.GOLD + "Auction ends in " + timeLeft + " seconds!");
                     lastAnnounced = (int) timeLeft;
                 }
                 if (timeLeft <= 0) Bukkit.getScheduler().cancelTask(countdownTaskId);
@@ -290,7 +291,7 @@ public class AuctionManager {
                 highestBidder.sendMessage(ChatColor.YELLOW + "Your inventory was full! The auction item was dropped at your feet.");
             }
 
-            Bukkit.broadcastMessage(ChatColor.GOLD + highestBidder.getName() + " won the auction for $" + highestBid);
+            broadcast(ChatColor.GOLD + highestBidder.getName() + " won the auction for $" + highestBid);
 
             if (economy != null) {
                 Method.MethodAccount sellerAccount = economy.getAccount(currentSeller.getName(), currentSeller.getWorld());
@@ -308,7 +309,7 @@ public class AuctionManager {
                 currentSeller.sendMessage(ChatColor.YELLOW + "Your inventory was full! The item was dropped at your feet.");
             }
 
-            Bukkit.broadcastMessage(ChatColor.RED + "Auction ended with no bids.");
+            broadcast(ChatColor.RED + "Auction ended with no bids.");
         }
 
         currentItem = null;
@@ -327,7 +328,7 @@ public class AuctionManager {
         this.percentBidIncrement = 0.0;
         this.minBidIncrement = 1.0;
 
-        Bukkit.broadcastMessage(ChatColor.RED + "The current auction has been forcibly reset by an admin.");
+        broadcast(ChatColor.RED + "The current auction has been forcibly reset by an admin.");
     }
 
     public void cleanupStuckAuction() {
@@ -343,10 +344,16 @@ public class AuctionManager {
         long gracePeriodEnd = auctionEndTime + (maxAuctionTime * 1000L);
 
         if (now > gracePeriodEnd && auctionStartTime < (now - (maxAuctionTime * 1000L))) {
-            Bukkit.broadcastMessage(ChatColor.RED + "Stuck auction forcibly reset due to timeout.");
+            broadcast(ChatColor.RED + "Stuck auction forcibly reset due to timeout.");
             getLogger().warning("[Auctioneer] An auction was forcibly reset due to timeout.");
             forceEnd();
         }
+    }
+
+    public void broadcast(String message) {
+        // Broadcast to console and all players
+        ((CraftServer) Bukkit.getServer()).getServer().console.sendMessage(message);
+        Bukkit.broadcastMessage(message);
     }
 
     public String getCurrentItemDisplayName() {
