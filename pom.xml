@@ -6,7 +6,7 @@
 
     <groupId>com.garsooon</groupId>
     <artifactId>Auctioneer</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <description>A simple chat based auction plugin for items in Beta 1.7.3 Minecraft with lots of settings for total control of its behavior.</description>
 
     <properties>
@@ -39,10 +39,10 @@
             </snapshots>
         </repository>
 
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
+<!--        <repository>-->
+<!--            <id>spigot-repo</id>-->
+<!--            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>-->
+<!--        </repository>-->
     </repositories>
 
     <build>
@@ -104,12 +104,12 @@
             <version>1.1.8</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.10-R0.1-20160623.004001-36</version>
-            <scope>provided</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.spigotmc</groupId>-->
+<!--            <artifactId>spigot-api</artifactId>-->
+<!--            <version>1.10-R0.1-20160623.004001-36</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>me.zavdav</groupId>
